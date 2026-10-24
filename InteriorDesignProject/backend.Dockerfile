@@ -1,5 +1,5 @@
-# Stage 1: Build the app
-FROM eclipse-temurin:21-jdk AS builder
+# Stage 1: Build the app natively on the runner host architecture (prevents QEMU JVM hang)
+FROM --platform=$BUILDPLATFORM eclipse-temurin:21-jdk AS builder
 
 WORKDIR /app
 

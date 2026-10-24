@@ -1,5 +1,5 @@
-# Stage 1: Build
-FROM node:20-alpine AS build
+# Stage 1: Build natively on runner host architecture
+FROM --platform=$BUILDPLATFORM node:20-alpine AS build
 WORKDIR /app
 
 COPY package*.json ./
