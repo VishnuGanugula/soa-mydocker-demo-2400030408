@@ -1,0 +1,53 @@
+services:
+  postgresdb:
+    image: postgres:16-alpine
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: InteriorDesign
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - springboot-postgres-net
+
+  backend:
+    build:
+      context: ./InteriorDesignProject
+      dockerfile: backend.Dockerfile
+    image: vishnuganugula/docker-backend-2400030408:latest
+    container_name: docker-springboot
+    ports:
+      - "2007:2007"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresdb:5432/InteriorDesign
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: docker
+      SERVER_PORT: 2007
+    depends_on:
+      - postgresdb
+    restart: on-failure
+    networks:
+      - springboot-postgres-net
+
+  frontend:
+    build:
+      context: ./InteriorDesignFrontend
+      dockerfile: frontend.Dockerfile
+    image: vishnuganugula/docker-frontend-2400030408:latest
+    container_name: docker-react
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: on-failure
+    networks:
+      - springboot-postgres-net
+
+volumes:
+  postgres_data:
+
+networks:
+  springboot-postgres-net:
